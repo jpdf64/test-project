@@ -15,9 +15,7 @@ pipeline {
             steps {
                 echo " ============== docker build =================="
                 dir ('docker/test'){
-                    sh 'sudo su'
                     sh 'docker build .'
-                    sh 'exit'
                 }
                 
                 }
