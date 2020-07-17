@@ -24,3 +24,4 @@ with app.app_context():
     user.items = [item1, item2, item3, item4]
 
     db.session.commit()
+    
