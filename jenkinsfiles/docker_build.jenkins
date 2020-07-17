@@ -1,26 +1,42 @@
 #!groovy
 // Run docker build
-//test
 properties([disableConcurrentBuilds()])
 
 pipeline {
     agent { 
         label 'master'
         }
-    triggers { pollSCM('* * * * *')}
+    triggers { pollSCM('* * * * *') }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps()
     }
     stages {
-        stage("create docker img") {
+        stage("docker login") {
             steps {
-                echo " ============== docker build =================="
-                dir ('flask/todoism'){
-                    sh 'docker build .'
-                }
-                
+                echo " ============== docker login =================="
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_jpdf64', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh '''
+                    docker login -u $USERNAME -p $PASSWORD
+                    '''
                 }
             }
         }
+        stage("create docker image") {
+            steps {
+                echo " ============== start building image =================="
+                dir ('docker/toolbox') {
+                    sh 'docker build -t jpdf64/test-project:latest . '
+                }
+            }
+        }
+        stage("docker push") {
+            steps {
+                echo " ============== docker push =================="
+                sh '''
+                docker push jpdf64/test-project:latest
+                '''
+            }
+        }
+    }
 }
