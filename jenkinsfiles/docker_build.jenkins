@@ -25,7 +25,7 @@ pipeline {
         stage("create docker image") {
             steps {
                 echo " ============== start building image =================="
-                dir ('docker/toolbox') {
+                dir ('flask/todoism') {
                     sh 'docker build -t jpdf64/test-project:latest . '
                 }
             }
